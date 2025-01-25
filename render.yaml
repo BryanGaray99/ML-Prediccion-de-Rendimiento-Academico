@@ -1,0 +1,26 @@
+databases:
+  - name: random_forest_simulator_db
+    plan: free
+    databaseName: random_forest_simulator_db_pg
+    user: random_forest_simulator_db_pg_user
+
+services:
+  - type: web
+    plan: free
+    name: random_forest_simulator
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "python -m gunicorn random_forest_simulator.asgi:application -k uvicorn.workers.UvicornWorker"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: random_forest_simulator_db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
+      - key: DEBUG
+        value: 'False'
+      - key: MODE
+        value: 'production'

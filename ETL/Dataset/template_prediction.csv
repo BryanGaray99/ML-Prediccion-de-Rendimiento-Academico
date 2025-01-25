@@ -1,0 +1,14 @@
+﻿Edad,Genero_Cod,Numero_Inasistencias,Animacion_Lectura_Cod,Anio_Escolar_Cod,Porc_Asistencia_Refuerzo,Estado_Salud_Emocional,Acompanamiento_Integral_Cod,Orientacion_Vocacional_Cod,Participacion_Extracurriculares
+18,Masculino,8,A-,SegundoBach,12.0,SinProblemas,D+,C+,2
+
+Guia para ubicar valores
+Asegurese de borrar estas notas antes de cargar el csv!!!
+- Edad: Número entero de 10 a 20
+- Numero_Inasistencias: Número entero de 0 a 200
+- Participacion_Extracurriculares: Número entero de 0 a 20
+- Porc_Asistencia_Refuerzo: Número decimal 0.00 a 100.00
+- Genero_Cod: Masculino, Femenino
+- Anio_Escolar_Cod: Octavo, Noveno, Decimo, PrimeroBach, SegundoBach, TerceroBach
+- Estado_Salud_Emocional: SinProblemas, Ocasional, Cronico
+- Animacion_Lectura_Cod / Acompanamiento_Integral_Cod / Orientacion_Vocacional_Cod: E-, E+, D-, D+, C-, C+, B-, B+, A-, A+
+

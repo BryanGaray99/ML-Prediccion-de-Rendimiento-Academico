@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Forest Predictor | Predicción con Random Forest</title>
+    {% load static %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'predictor/styles.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0/dist/chartjs-plugin-datalabels.min.js"></script>
+
+    <meta name="description" content="Simulador de Árbol de Decisión para predecir el nivel de afectados en desastres naturales en Ecuador.">
+    <meta name="keywords" content="Machine Learning, Árbol de Decisión, Desastres Naturales, Ecuador, Predicción">
+    <meta name="author" content="Bryan Garay">
+
+    <meta property="og:title" content="Decision Tree Simulator | Simulador de Árbol de Decisión">
+    <meta property="og:description" content="Simulador de Árbol de Decisión para predecir el nivel de afectados en desastres naturales en Ecuador.">
+    <meta property="og:image" content="https://i.ibb.co/6mvdCDD/preview.png">
+    <meta property="og:url" content="https://random_forest_simulator.onrender.com">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Decision Tree Simulator | Simulador de Árbol de Decisión">
+    <meta name="twitter:description" content="Simulador de Random Forest para predecir el nivel de afectados en desastres naturales en Ecuador.">
+    <meta name="twitter:image" content="https://i.ibb.co/6mvdCDD/preview.png">
+    
+    {% load static %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'predictor/styles.css' %}">
+    <link rel="shortcut icon" href="https://i.ibb.co/6mvdCDD/preview.png" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0/dist/chartjs-plugin-datalabels.min.js"></script>
+</head>
+
+<body>
+    <h1>Predicción de Rendimiento Académico con un Modelo de Random Forest</h1>
+    <h3>Basado en datos para el Nivel de Educación General Básica, Subnivel
+        Media, Subnivel Superior y el Nivel de Bachillerato de Ecuador
+    </h3>
+    <div class="container">
+        <div class="form-container">
+            <form id="predict-form">
+                {% csrf_token %}
+                <!-- ANIO_ESCOLAR_COD (Octavo, Noveno, Decimo, PrimeroBach, ...) -->
+                <div class="form-group">
+                    <label for="anio_escolar_cod" class="tooltip">
+                        Año Escolar:
+                        <span class="tooltip-text">Grado que cursará el estudiante.</span>
+                    </label>
+                    <select id="anio_escolar_cod" name="anio_escolar_cod" required>
+                        <option value="" disabled selected>-- Seleccione --</option>
+                        <option value="Octavo">Octavo</option>
+                        <option value="Noveno">Noveno</option>
+                        <option value="Decimo">Décimo</option>
+                        <option value="PrimeroBach">Primero de Bachillerato</option>
+                        <option value="SegundoBach">Segundo de Bachillerato</option>
+                        <option value="TerceroBach">Tercero de Bachillerato</option>
+                    </select>
+                </div>
+                
+                <!-- GENERO_COD (Masculino/Femenino) -->
+                <div class="form-group" style="margin-botton: -6px">
+                    <label for="genero_cod" class="tooltip">
+                        Género:
+                        <span class="tooltip-text">Sexo biológico del estudiante. Selecciona Masculino o Femenino.</span>
+                    </label>
+                    <select id="genero_cod" name="genero_cod" required>
+                        <option value="" disabled selected>-- Seleccione --</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Femenino">Femenino</option>
+                    </select>
+                </div>
+
+                <!-- EDAD (10 a 20) -->
+                <div style="display: flex; align-items: center; gap: 30px; margin-bottom: -6px;">
+                    <label for="edad" class="tooltip">
+                        Edad:
+                        <span class="tooltip-text">Edad del estudiante rango: 10 a 20 años.</span>
+                    </label>
+                    <span id="edadOutput" style="font-size: 14px;"></span>
+                    <input
+                        type="range"
+                        id="edad"
+                        name="edad"
+                        min="10"
+                        max="20"
+                        step="1"
+                        value="10"
+                        oninput="document.getElementById('edadOutput').innerText = this.value"
+                        required
+                    >
+                </div>
+
+                <!-- NUMERO_INASISTENCIAS (0 a 200) -->
+                <div style="display: flex; align-items: center; gap: 30px; margin-bottom: -6px;">
+                    <label for="num_inasist" class="tooltip">
+                        Número de Inasistencias:
+                        <span class="tooltip-text">Cantidad total estimada de faltas a clase en el año (rango: 0 a 200).</span>
+                    </label>
+                    <span id="inasistencias" style="font-size: 14px;"></span>
+                    <input
+                        type="range"
+                        id="num_inasist"
+                        name="num_inasist"
+                        min="0"
+                        max="200"
+                        step="1"
+                        value="0"
+                        required
+                        oninput="document.getElementById('inasistencias').innerText = this.value"
+                    >
+                </div>
+
+                <!-- PORC_ASISTENCIA_REFUERZO (float: 0 a 100) -->
+                <div style="display: flex; align-items: center; gap: 30px; margin-bottom: -6px;">
+                    <label for="porc_asistencia" class="tooltip">
+                        Asistencia a Refuerzo (%):
+                        <span class="tooltip-text">Porcentaje de asistencia a refuerzos académicos (0% a 100%).</span>
+                    </label>
+                    <span id="porAsistenciaOutput" style="font-size: 14px;"></span>
+                    <input
+                        type="range"
+                        step="0.1"
+                        id="porc_asistencia"
+                        name="porc_asistencia"
+                        min="0"
+                        max="100"
+                        value="0"
+                        required
+                        oninput="document.getElementById('porAsistenciaOutput').innerText = this.value"
+                    >
+                </div>
+
+                <!-- PARTICIPACION_EXTRACURRICULARES (0 a 20) -->
+                <div style="display: flex; align-items: center; gap: 30px; margin-bottom: 6px;">
+                    <label for="extra_participacion" class="tooltip">
+                        Actividades Extracurriculares:
+                        <span class="tooltip-text">Especifique la cantidad de actividades extracurriculares realizadas por el estudiante en un año lectivo normal: de 0 hasta máximo 20</span>
+                    </label>
+                    <span id="participacionExtra" style="font-size: 14px;"></span>
+                    <input
+                        type="range"
+                        id="extra_participacion"
+                        name="extra_participacion"
+                        min="0"
+                        max="20"
+                        step="1"
+                        value="0"
+                        oninput="document.getElementById('participacionExtra').innerText = this.value"
+                    >
+                </div>
+
+                <!-- Estado Salud / Emocional -->
+                <div class="form-group">
+                    <label for="salud_emocional" class="tooltip">
+                        Estado Salud / Emocional:
+                        <span class="tooltip-text">Estado actual de salud / emcional psicológico del estudiante: Sin Problemas, Ocasional, Crónico.</span>
+                    </label>
+                    <select id="salud_emocional" name="salud_emocional" required>
+                        <option value="" disabled selected>-- Seleccione --</option>
+                        <option value="SinProblemas">Sin Problemas</option>
+                        <option value="Ocasional">Ocasional</option>
+                        <option value="Cronico">Crónico</option>
+                    </select>
+                </div>
+
+                <!-- Animación Lectura -->
+                <div class="form-group">
+                    <label for="anim_lectura_cod" class="tooltip">
+                        Animación Lectura:
+                        <span class="tooltip-text">Estime la Animación a la Lectura del estudiante. Esta se enfoca en la lectura y la cultura para consolidar aprendizajes según el Sistema Nacional de Educación. Se califica cualitativamente desde E- hasta A+</span>
+                    </label>
+                    <select id="anim_lectura_cod" name="anim_lectura_cod" required>
+                        <option value="" disabled selected>-- Seleccione --</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="C+">C+</option>
+                        <option value="C-">C-</option>
+                        <option value="D+">D+</option>
+                        <option value="D-">D-</option>
+                        <option value="E+">E+</option>
+                        <option value="E-">E-</option>
+                    </select>
+                </div>
+
+                <!-- Acompañamiento Integral -->
+                <div class="form-group">
+                    <label for="acomp_integral_cod" class="tooltip">
+                        Acompañamiento Integral:
+                        <span class="tooltip-text">Estime el nivel de Acompañamiento Integral. Se refiere a las aptitudes del estudiante relacionadas a su autonomía para tomar decisiones que aporten a su crecimiento personal y el de su comunidad. Se califica cualitativamente desde E- hasta A+</span>
+                    </label>
+                    <select id="acomp_integral_cod" name="acomp_integral_cod" required>
+                        <option value="" disabled selected>-- Seleccione --</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="C+">C+</option>
+                        <option value="C-">C-</option>
+                        <option value="D+">D+</option>
+                        <option value="D-">D-</option>
+                        <option value="E+">E+</option>
+                        <option value="E-">E-</option>
+                    </select>
+                </div>
+
+                <!-- Orientación Vocacional -->
+                <div class="form-group">
+                    <label for="orientacion_voc_cod" class="tooltip">
+                        Orientación Vocacional:
+                        <span class="tooltip-text">Estime el nivel de Orientación Vocacional. Se refirere al conjunto de capacidades, así como responsabilidades del estudiante que le permiten moldear su trayectoria educativa y futuro profesional. Se califica cualitativamente desde E- hasta A+</span>
+                    </label>
+                    <select id="orientacion_voc_cod" name="orientacion_voc_cod" required>
+                        <option value="" disabled selected>-- Seleccione --</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="C+">C+</option>
+                        <option value="C-">C-</option>
+                        <option value="D+">D+</option>
+                        <option value="D-">D-</option>
+                        <option value="E+">E+</option>
+                        <option value="E-">E-</option>
+                    </select>
+                </div>
+                
+                <!-- BOTÓN PARA PREDECIR -->
+                <button type="button" onclick="makePrediction()">Predecir</button>
+            </form>
+        </div>
+        <div class="result-csv-container">
+            <div class="result-container">
+                <h2>Predicción: Rendimiento Académico Cualitativo</h2>
+                <div id="loader" style="display:none;">
+                    <div class="spinner"></div>
+                </div>
+                <canvas id="predictionChart"></canvas>
+                <p id="finalPrediction"></p>
+            </div>
+            <div class="csv-container">
+                <h2>Predecir un conjunto de datos con CSV</h2>
+                <p>
+                    Descarga la plantilla
+                    <a 
+                        href="{% static 'predictor/template_prediction.csv' %}" 
+                        download 
+                    >
+                        <i class="fa fa-download"></i>Template CSV
+                    </a>, completa con tus datos <br/>
+                    siguiendo la guía y luego carga el csv para obtener la predicción.
+                </p>
+        
+                
+                <!-- Form para subir CSV -->
+                <form id="upload-csv-form" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <p><strong>Cargue su archivo CSV:</strong></p>
+                    <input
+                        type="file"
+                        name="file"
+                        id="csv-file"
+                        accept=".csv"
+                        class="file-input"
+                        required
+                    >
+                    <button type="button" onclick="validateAndPredictCSV()" class="btn-upload">
+                        Predecir con CSV
+                    </button>
+                </form>
+            
+                <!-- Loader de proceso (se muestra u oculta vía JS) -->
+                <div id="loader-csv" style="display:none;">
+                    <div class="spinner"></div>
+                </div>
+            
+                <!-- Enlace para descargar el CSV resultante -->
+                <a
+                  id="download-link"
+                  class="download-link"
+                  style="display: none;"
+                >
+                  Descargar archivo con predicciones
+                </a>
+            
+                <!-- Mensajes de estado/errores -->
+                <p id="upload-message"></p>
+            </div>            
+        </div>
+    </div>
+    <footer>
+        <div class="footer-content">
+            <span>
+                <a href="https://www.linkedin.com/in/bg99astro" target="_blank">
+                    <img src="{% static 'predictor/LI_In_Logo.png' %}" alt="LinkedIn" class="footer-icon"> 
+                    Autor: Bryan Garay
+                </a>
+            </span> </br>
+            <span> 
+                <a 
+                    href="https://www.canva.com/design/DAGan7gw1rw/9O2iIv_D8_p5bxMlr54HIg/edit?utm_content=DAGan7gw1rw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" target="_blank"> 
+                    <img src="{% static 'predictor/Canva_logo.png' %}" alt="Canva" class="footer-icon">
+                    Presentación del Proyecto
+                </a> 
+            </span> </br>
+            <a Github_Logo
+                href="https://github.com/BryanGaray99/ML-Prediccion-de-Rendimiento-Academico" target="_blank"> 
+                <img src="{% static 'predictor/Github_Logo.png' %}" alt="Github" class="footer-icon">
+                Repositorio del Proyecto
+            </a> </br>
+        </div>
+    </footer>
+    <script src="{% static 'predictor/script.js' %}"></script>
+</body>
+</html>

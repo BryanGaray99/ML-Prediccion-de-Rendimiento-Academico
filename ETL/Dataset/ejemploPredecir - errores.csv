@@ -1,0 +1,5 @@
+﻿Edad,Genero_Cod,Numero_Inasistencias,Animacion_Lectura_Cod,Anio_Escolar_Cod,Porc_Asistencia_Refuerzo,Estado_Salud_Emocional,Acompanamiento_Integral_Cod,Orientacion_Vocacional_Cod,Participacion_Extracurriculares
+16,Masculino,8,A-,Universidad,75.0,SinProblemas,D+,C+,2
+18,Femenino,2,A+,TerceroBach,100.0,SinProblemas,A+,A+,10
+40,Masculino,20,D-,Octavo,20.0,Ocasional,D-,C+,2
+13,Masculino,40,E-,Noveno,00.0,Mortal,E-,E+,0
