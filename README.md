@@ -63,9 +63,10 @@ Los procesos ETL en Random Forest Simulator se encargan de transformar los datos
     Crea un archivo `.env` en la raíz del proyecto con el siguiente contenido:
 
     ```env
-    MODE=development
-    SECRET_KEY=your-secret-key
-    DEBUG=True
+    SECRET_KEY='your-secret-key'
+    MODE='developmen or production'
+    DATABASE_URL='your-database-url-connection-string'
+    DEBUG='True'
     ```
 
 5. Realiza las migraciones de la base de datos:
