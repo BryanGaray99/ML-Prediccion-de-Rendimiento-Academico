@@ -1,11 +1,11 @@
-﻿Guia para ubicar valores
-Asegurese de borrar estas notas antes de cargar el csv!!!
+﻿Guia para ubicar valores en el siguiente órden:
 - Edad: Número entero de 10 a 20
-- Numero_Inasistencias: Número entero de 0 a 200
-- Participacion_Extracurriculares: Número entero de 0 a 20
-- Porc_Asistencia_Refuerzo: Número decimal 0.00 a 100.00
 - Genero_Cod: Masculino, Femenino
+- Numero_Inasistencias: Número entero de 0 a 200
+- Animacion_Lectura_Cod: E-, E+, D-, D+, C-, C+, B-, B+, A-, A+
 - Anio_Escolar_Cod: Octavo, Noveno, Decimo, PrimeroBach, SegundoBach, TerceroBach
+- Porc_Asistencia_Refuerzo: Número decimal 0.00 a 100.00
 - Estado_Salud_Emocional: SinProblemas, Ocasional, Cronico
-- Animacion_Lectura_Cod / Acompanamiento_Integral_Cod / Orientacion_Vocacional_Cod: E-, E+, D-, D+, C-, C+, B-, B+, A-, A+
-
+- Acompanamiento_Integral_Cod: E-, E+, D-, D+, C-, C+, B-, B+, A-, A+
+- Orientacion_Vocacional_Cod: E-, E+, D-, D+, C-, C+, B-, B+, A-, A+
+- Participacion_Extracurriculares: Número entero de 0 a 20
