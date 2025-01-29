@@ -5,12 +5,12 @@
 
 ## Descripción
 
-Random Forest Simulator es una aplicación web construida con Django que permite predecir datos utilizando modelos de machine learning. La aplicación soporta modelos entrenados en Python y RapidMiner, y proporciona una interfaz intuitiva para cargar datos, entrenar modelos y realizar predicciones.
+Random Forest Simulator es una aplicación web construida con Django que permite predecir datos utilizando modelos de machine learning. La aplicación soporta un modelo clasificatorio entrenado en Python, y proporciona una interfaz intuitiva para cargar datos y hacer predicciones de rendimiento académico basado en una serie de variables que se explican mediante tooltips sobre los campos.
 
 ## Características
 
-- **Predicción con Modelos Python y RapidMiner**: Los usuarios pueden elegir entre utilizar modelos entrenados en Python o RapidMiner para realizar predicciones.
-- **Cargador de CSV**: Los usuarios pueden cargar archivos CSV para procesarlos y reentrenar los modelos.
+- **Predicción con Modelo en Python**: El servidor al inciar construye un modelo clasificatorio de Random Forest que se exporta como un pkl
+- **Cargador de CSV**: Los usuarios pueden cargar archivos CSV para predecir un conjunto de datos.
 - **Validación de Entradas**: El formulario de predicción incluye validaciones para asegurar que los datos de entrada sean correctos.
 - **Gráfico de Resultados**: Los resultados de las predicciones se muestran en un gráfico de barras que indica las probabilidades de diferentes rangos.
 
@@ -20,21 +20,8 @@ El proyecto está estructurado en varias partes clave:
 
 - **Backend (Django)**: Maneja las solicitudes del usuario, procesa los datos, y realiza las predicciones utilizando modelos de machine learning.
 - **Frontend (HTML, CSS, JavaScript)**: Proporciona la interfaz de usuario para cargar datos, realizar predicciones y mostrar los resultados.
-- **Modelos de Machine Learning (Python y RapidMiner)**: Implementaciones de modelos de machine learning que se utilizan para realizar las predicciones.
+- **Modelos de Machine Learning (Python)**: Implementaciones de modelos de machine learning que se utilizan para realizar las predicciones.
 - **Procesos ETL**: Procesos de extracción, transformación y carga que preparan los datos para el entrenamiento y predicción de modelos.
-
-## Procesos ETL
-
-Los procesos ETL en Random Forest Simulator se encargan de transformar los datos crudos en datos que pueden ser utilizados por los modelos de machine learning. El flujo de trabajo principal es el siguiente:
-
-1. **Carga del CSV**: El usuario carga un archivo CSV que contiene los datos crudos.
-2. **Filtrado de Columnas**: Se filtran las columnas relevantes para el análisis.
-3. **Procesamiento y Filtrado del Dataset**: Se aplican transformaciones y filtros adicionales para limpiar y preparar los datos.
-4. **Agregación de Totales**: Se calculan totales y otras métricas relevantes.
-5. **Unificación de Registros**: Se unifican registros duplicados o relacionados.
-6. **Agrupación de Rangos**: Se agrupan los datos en rangos específicos para facilitar el análisis.
-7. **Codificación de Columnas**: Se codifican las columnas categóricas utilizando diccionarios predefinidos.
-8. **Almacenamiento de Datos**: Los datos procesados se almacenan y se utilizan para entrenar los modelos de machine learning.
 
 ## Instalación
 
@@ -84,14 +71,14 @@ Los procesos ETL en Random Forest Simulator se encargan de transformar los datos
 ## Uso
 
 1. **Formulario de Predicción**:
-    - Selecciona el modelo (Python o RapidMiner).
     - Ingresa los datos requeridos en el formulario.
     - Haz clic en "Predecir" para ver los resultados.
 
-2. **Carga de CSV**:
+2. **Predicción con CSV**:
     - Ve a la sección de carga de CSV.
-    - Selecciona un archivo CSV y haz clic en "Upload and Process".
-    - Descarga el archivo procesado una vez que esté listo.
+    - Descarga el template con instrucciones y agrega tus datos, asegurate de borrar las intrucciones.
+    - Carga tu csv
+    - Si todo está correcto, se descarga automáticamente tu archivo con predicciones.
 
 ## Contribuir
 
