@@ -33,6 +33,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
 <body>
@@ -94,11 +95,11 @@
                     >
                 </div>
 
-                <!-- NUMERO_INASISTENCIAS (0 a 200) -->
+                <!-- NUMERO_INASISTENCIAS (0 a 20) -->
                 <div style="display: flex; align-items: center; gap: 30px; margin-bottom: -6px;">
                     <label for="num_inasist" class="tooltip">
                         Número de Inasistencias:
-                        <span class="tooltip-text">Cantidad total estimada de faltas a clase en el año (rango: 0 a 200).</span>
+                        <span class="tooltip-text">Cantidad total estimada de faltas a clase en el año (rango: 0 a 20).</span>
                     </label>
                     <span id="inasistencias" style="font-size: 14px;"></span>
                     <input
@@ -106,7 +107,7 @@
                         id="num_inasist"
                         name="num_inasist"
                         min="0"
-                        max="200"
+                        max="20"
                         step="1"
                         value="0"
                         required
@@ -242,6 +243,7 @@
                 </div>
                 <canvas id="predictionChart"></canvas>
                 <p id="finalPrediction"></p>
+                <a href="javascript:void(0);" id="download-report" class="download-report download-link" onclick="downloadReport()" style="display: none;">Descarga el reporte detallado</a>
             </div>
             <div class="csv-container">
                 <h2>Predecir un conjunto de datos con CSV</h2>

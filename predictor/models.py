@@ -23,12 +23,12 @@ def cargar_datos_python(file_path, use_smote=True):
     """
     Lee un CSV que debe contener 'Promedio_5CAT' como columna target,
     más estas 10 variables:
-      [Edad, Genero_Cod, Numero_Inasistencias, Animacion_Lectura_Cod, 
+      [Edad, Genero_Cod, Numero_Inasistencias, Animacion_Lectura_Cod,
        Anio_Escolar_Cod, Porc_Asistencia_Refuerzo, Estado_Salud_Emocional,
        Acompanamiento_Integral_Cod, Orientacion_Vocacional_Cod,
        Participacion_Extracurriculares]
     Ignora columnas extra (por ej. 'Promedio_Anual').
-    
+
     Aplica un OneHotEncoder a las columnas categóricas 
     y (opcional) SMOTE para balancear.
     """
@@ -38,7 +38,21 @@ def cargar_datos_python(file_path, use_smote=True):
     if "Promedio_5CAT" not in df.columns:
         raise ValueError("No se encontró la columna 'Promedio_5CAT' en el dataset.")
 
-    # Definimos las features que realmente usaremos
+    ####################
+    # 1) Feature engineering
+    ####################
+    # Crear columna categórica para inasistencias
+    df["Numero_Inasistencias"] = pd.cut(
+        df["Numero_Inasistencias"],
+        bins=[-1, 10, 20], 
+        labels=[0, 1]      
+    ).astype(int)
+
+    # Dado que 'Estado_Salud_Emocional' ya está en 0,1,2, no lo tocamos.
+
+    ####################
+    # 2) Seleccionar las columnas que usaremos
+    ####################
     features = [
         "Edad",
         "Genero_Cod",
@@ -53,18 +67,20 @@ def cargar_datos_python(file_path, use_smote=True):
     ]
     target = "Promedio_5CAT"
 
-    # Verificar que existan
+    # Verificar que existan en el DataFrame
     for col in features:
         if col not in df.columns:
-            raise ValueError(f"[ERROR] La columna '{col}' no existe en el CSV. "
-                             f"Columnas disponibles: {list(df.columns)}")
+            raise ValueError(f"[ERROR] La columna '{col}' no existe en el CSV.")
 
     X = df[features].copy()
     y = df[target].copy()
 
-    # Columnas categoricas vs numericas
+    ####################
+    # 3) Definir columnas categóricas vs numéricas
+    ####################
     categorical_cols = [
         "Genero_Cod",
+        "Numero_Inasistencias",
         "Animacion_Lectura_Cod",
         "Estado_Salud_Emocional",
         "Acompanamiento_Integral_Cod",
@@ -72,13 +88,14 @@ def cargar_datos_python(file_path, use_smote=True):
     ]
     numeric_cols = [
         "Edad",
-        "Numero_Inasistencias",
         "Porc_Asistencia_Refuerzo",
         "Participacion_Extracurriculares",
         "Anio_Escolar_Cod"
     ]
 
-    # OneHot
+    ####################
+    # 4) Preprocesamiento (OneHot + pasar numéricas tal cual)
+    ####################
     preprocessor = ColumnTransformer(
         transformers=[
             ("cat", OneHotEncoder(drop='first', sparse_output=False), categorical_cols)
@@ -88,7 +105,9 @@ def cargar_datos_python(file_path, use_smote=True):
 
     X_pre = preprocessor.fit_transform(X)
 
-    # SMOTE opcional
+    ####################
+    # 5) SMOTE
+    ####################
     if use_smote:
         sm = SMOTE(random_state=42)
         X_final, y_final = sm.fit_resample(X_pre, y)
@@ -97,7 +116,7 @@ def cargar_datos_python(file_path, use_smote=True):
         X_final, y_final = X_pre, y
         print("[DEBUG] Sin SMOTE, X_final.shape =", X_final.shape)
 
-    # Estas son las 10 columnas "crudas" (sin OneHot)
+    # Estas son las columnas "crudas" (sin OneHot) que se usaron
     columnas_originales = list(X.columns)
     print("[DEBUG] columnas_originales =", columnas_originales)
 
@@ -108,7 +127,7 @@ def cargar_datos_python(file_path, use_smote=True):
 # 2) Entrenamiento y guardado del modelo
 ########################################
 
-def entrenar_modelo_python(X, y, preprocessor=None, n_iter=10, test_size=0.3):
+def entrenar_modelo_python(X, y, preprocessor=None, n_iter=10, test_size=0.2):
     """
     Entrena un RandomForestClassifier con búsqueda aleatoria (RandomizedSearchCV).
     
@@ -130,12 +149,15 @@ def entrenar_modelo_python(X, y, preprocessor=None, n_iter=10, test_size=0.3):
         "min_samples_leaf": [1, 2, 5]
     }
 
-    rf = RandomForestClassifier(random_state=42)
+    rf = RandomForestClassifier(
+        random_state=42,
+        class_weight={"A":2.0, "B":1.0, "C":1.0, "D":1.0, "E":1.0}
+    )
     random_search = RandomizedSearchCV(
         rf,
         param_distributions=param_dist,
         n_iter=n_iter,
-        scoring='accuracy',
+        scoring='f1_macro',
         cv=3,
         random_state=42,
         verbose=1,
@@ -248,6 +270,12 @@ def predecir_probabilidades_python(modelo, df_entrada, cols_originales, preproce
 
     df_entrada = df_entrada[cols_originales].copy()  # recortar
     print("[DEBUG] df_entrada.shape tras recorte:", df_entrada.shape)
+    
+    df_entrada["Numero_Inasistencias"] = pd.cut(
+        df_entrada["Numero_Inasistencias"],
+        bins=[-1, 10, 20],
+        labels=[0, 1]
+    ).astype(int)
 
     # Aplicar la transformación (OneHot, etc.)
     df_transf = preprocessor.transform(df_entrada)
